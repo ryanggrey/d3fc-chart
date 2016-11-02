@@ -130,7 +130,7 @@ export default (xScale, yScale) => {
         rebindAll(cartesian, yScale, includeMap({'ticks': 'yScaleTicks'}));
     }
 
-    var axisExclusions = exclude(
+    const axisExclusions = exclude(
         'xScale', 'yScale'  // these are set by this components
     );
     rebindAll(cartesian, xAxis, axisExclusions, prefix('x'));
@@ -143,6 +143,7 @@ export default (xScale, yScale) => {
         const newValue = args[0];
         if (newValue !== yOrient) {
             yAxis = axisForOrient(newValue);
+            rebindAll(cartesian, yAxis, axisExclusions, prefix('y'));
         }
         yOrient = newValue;
         return cartesian;
@@ -154,6 +155,7 @@ export default (xScale, yScale) => {
         const newValue = args[0];
         if (newValue !== xOrient) {
             xAxis = axisForOrient(newValue);
+            rebindAll(cartesian, xAxis, axisExclusions, prefix('x'));
         }
         xOrient = newValue;
         return cartesian;
