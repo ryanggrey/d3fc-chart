@@ -43,30 +43,27 @@ export default (xScale, yScale) => {
                 .attr('style', 'display: flex; height: 100%; width: 100%; flex-direction: column')
                 .attr('auto-resize', '')
                 .html(`<div class='chart-label'
-                            style='height: ${chartLabel ? '2' : '0'}em; display: flex; align-items: center; justify-content: center; margin-${yOrient}: 4em'>
-                          <div class='label'></div>
+                            style='height: ${chartLabel ? '2' : '0'}em; line-height: 2em; text-align: center; margin-${yOrient}: 4em'>
                       </div>
                       <div style='flex: 1; display: flex; flex-direction: ${xOrient === 'bottom' ? 'column' : 'column-reverse'}'>
                           <div style='flex: 1; display: flex; flex-direction: ${yOrient === 'right' ? 'row' : 'row-reverse'}'>
                               <d3fc-svg class='plot-area' style='flex: 1; overflow: hidden'></d3fc-svg>
                               <d3fc-svg class='y-axis' style='width: 3em'></d3fc-svg>
-                              <div class='y-axis-label' style='width: 1em; display: flex; align-items: center; justify-content: center'>
-                                  <div class='label' style='transform: rotateZ(90deg)'></div>
+                              <div style='width: 1em; display: flex; align-items: center; justify-content: center'>
+                                  <div class='y-axis-label' style='transform: rotate(90deg)'></div>
                               </div>
                           </div>
                           <d3fc-svg class='x-axis' style='height: 2em; margin-${yOrient}: 4em'></d3fc-svg>
-                          <div class='x-axis-label' style='height: 1em; display: flex; align-items: center; justify-content: center; margin-${yOrient}: 4em'>
-                              <div class='label'></div>
-                          </div>
+                          <div class='x-axis-label' style='height: 1em; line-height: 1em; text-align: center; margin-${yOrient}: 4em'></div>
                       </div>`);
 
-            container.select('.y-axis-label .label')
+            container.select('.y-axis-label')
                 .text(yLabel);
 
-            container.select('.x-axis-label .label')
+            container.select('.x-axis-label')
                 .text(xLabel);
 
-            container.select('.chart-label .label')
+            container.select('.chart-label')
                 .text(chartLabel);
 
             select('.y-axis')
