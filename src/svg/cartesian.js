@@ -1,13 +1,13 @@
 import { select, event } from 'd3-selection';
-import { scaleLinear } from 'd3-scale';
+import { scaleIdentity } from 'd3-scale';
 import { seriesSvgLine } from 'd3fc-series';
 import { axisBottom, axisRight, axisLeft, axisTop } from 'd3fc-axis';
 import { dataJoin } from 'd3fc-data-join';
 import { rebindAll, exclude, prefix, includeMap } from 'd3fc-rebind';
 
 export default (xScale, yScale) => {
-    xScale = xScale || scaleLinear();
-    yScale = yScale || scaleLinear();
+    xScale = xScale || scaleIdentity();
+    yScale = yScale || scaleIdentity();
 
     let yLabel = '';
     let xLabel = '';
