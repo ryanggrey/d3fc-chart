@@ -39,11 +39,6 @@ export default (xScale, yScale) => {
         selection.each((data, index, group) => {
             const container = containerDataJoin(select(group[index]), [data]);
 
-            const yLabelElements = `<div class='y-axis-label' style='width: 1em; display: flex; align-items: center; justify-content: center'>
-                    <div class='label' style='transform: rotateZ(90deg)'></div>
-                </div>`;
-            const yAxisElements = '<d3fc-svg class=\'y-axis\' style=\'width: 3em\'></d3fc-svg>';
-
             const xLabelElements = `<div class='x-axis-label' style='height: 1em; display: flex; align-items: center; justify-content: center'>
                     <div class='label'></div>
                 </div>`;
@@ -62,12 +57,12 @@ export default (xScale, yScale) => {
                           <div class='label'></div>
                       </div>
                       ${xOrient === 'top' ? xAxisContainer : ''}
-                      <div style='flex: 1; display: flex; flex-direction: row'>
-                          ${yOrient === 'left' ? yLabelElements : ''}
-                          ${yOrient === 'left' ? yAxisElements : ''}
+                      <div style='flex: 1; display: flex; flex-direction: ${yOrient === 'right' ? 'row' : 'row-reverse'}'>
                           <d3fc-svg class='plot-area' style='flex: 1; overflow: hidden'></d3fc-svg>
-                          ${yOrient === 'right' ? yAxisElements : ''}
-                          ${yOrient === 'right' ? yLabelElements : ''}
+                          <d3fc-svg class='y-axis' style='width: 3em'></d3fc-svg>
+                          <div class='y-axis-label' style='width: 1em; display: flex; align-items: center; justify-content: center'>
+                              <div class='label' style='transform: rotateZ(90deg)'></div>
+                          </div>
                       </div>
                       ${xOrient === 'bottom' ? xAxisContainer : ''}`);
 
