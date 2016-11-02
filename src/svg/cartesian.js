@@ -67,7 +67,7 @@ export default (xScale, yScale) => {
                 .text(chartLabel);
 
             select('.y-axis')
-                .on('resize', (d, i, nodes) => {
+                .on('measure', (d, i, nodes) => {
                     if (yOrient === 'left') {
                         const { width, height } = event.detail;
                         select(nodes[i])
@@ -82,7 +82,7 @@ export default (xScale, yScale) => {
                 });
 
             select('.x-axis')
-                .on('resize', (d, i, nodes) => {
+                .on('measure', (d, i, nodes) => {
                     if (xOrient === 'top') {
                         const { width, height } = event.detail;
                         select(nodes[i])
@@ -97,7 +97,7 @@ export default (xScale, yScale) => {
                 });
 
             container.select('.plot-area')
-                .on('resize', () => {
+                .on('measure', () => {
                     const size = event.detail;
                     xScale.range([0, size.width]);
                     yScale.range([size.height, 0]);
