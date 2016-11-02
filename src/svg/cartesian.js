@@ -39,32 +39,26 @@ export default (xScale, yScale) => {
         selection.each((data, index, group) => {
             const container = containerDataJoin(select(group[index]), [data]);
 
-            const xLabelElements = `<div class='x-axis-label' style='height: 1em; display: flex; align-items: center; justify-content: center'>
-                    <div class='label'></div>
-                </div>`;
-            const xAxisElements = '<d3fc-svg class=\'x-axis\' style=\'flex: 1\'></d3fc-svg>';
-
-            const xAxisContainer = `<div style='height: 3em; display: flex; flex-direction: column; margin-${yOrient}: 4em'>
-                    ${xOrient === 'bottom' ? xAxisElements : xLabelElements}
-                    ${xOrient === 'bottom' ? xLabelElements : xAxisElements}
-                </div>`;
-
             container.enter()
                 .attr('style', 'display: flex; height: 100%; width: 100%; flex-direction: column')
                 .attr('auto-resize', '')
                 .html(`<div class='chart-label'
-                            style='height: ${chartLabel ? '2' : '0'}em; display: flex; align-items: center; justify-content: center'>
+                            style='height: ${chartLabel ? '2' : '0'}em; display: flex; align-items: center; justify-content: center; margin-${yOrient}: 4em'>
                           <div class='label'></div>
                       </div>
-                      ${xOrient === 'top' ? xAxisContainer : ''}
-                      <div style='flex: 1; display: flex; flex-direction: ${yOrient === 'right' ? 'row' : 'row-reverse'}'>
-                          <d3fc-svg class='plot-area' style='flex: 1; overflow: hidden'></d3fc-svg>
-                          <d3fc-svg class='y-axis' style='width: 3em'></d3fc-svg>
-                          <div class='y-axis-label' style='width: 1em; display: flex; align-items: center; justify-content: center'>
-                              <div class='label' style='transform: rotateZ(90deg)'></div>
+                      <div style='flex: 1; display: flex; flex-direction: ${xOrient === 'bottom' ? 'column' : 'column-reverse'}'>
+                          <div style='flex: 1; display: flex; flex-direction: ${yOrient === 'right' ? 'row' : 'row-reverse'}'>
+                              <d3fc-svg class='plot-area' style='flex: 1; overflow: hidden'></d3fc-svg>
+                              <d3fc-svg class='y-axis' style='width: 3em'></d3fc-svg>
+                              <div class='y-axis-label' style='width: 1em; display: flex; align-items: center; justify-content: center'>
+                                  <div class='label' style='transform: rotateZ(90deg)'></div>
+                              </div>
                           </div>
-                      </div>
-                      ${xOrient === 'bottom' ? xAxisContainer : ''}`);
+                          <d3fc-svg class='x-axis' style='height: 2em; margin-${yOrient}: 4em'></d3fc-svg>
+                          <div class='x-axis-label' style='height: 1em; display: flex; align-items: center; justify-content: center; margin-${yOrient}: 4em'>
+                              <div class='label'></div>
+                          </div>
+                      </div>`);
 
             container.select('.y-axis-label .label')
                 .text(yLabel);
