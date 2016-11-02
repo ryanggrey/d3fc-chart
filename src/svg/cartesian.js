@@ -98,9 +98,9 @@ export default (xScale, yScale) => {
 
             container.select('.plot-area')
                 .on('measure', () => {
-                    const size = event.detail;
-                    xScale.range([0, size.width]);
-                    yScale.range([size.height, 0]);
+                    const { width, height } = event.detail;
+                    xScale.range([0, width]);
+                    yScale.range([height, 0]);
                 })
                 .on('draw', (d, i, nodes) => {
                     plotArea.xScale(xScale)
