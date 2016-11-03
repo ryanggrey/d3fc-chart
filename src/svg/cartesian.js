@@ -15,6 +15,13 @@ export default (xScale, yScale) => {
     let xOrient = 'bottom';
     let chartLabel = '';
     let plotArea = seriesSvgLine();
+    let xTickFormat = null;
+    let xTickArgs;
+    let xDecorate = () => {};
+    let yTickFormat = null;
+    let yTickArgs;
+    let yDecorate = () => {};
+    let decorate = () => {};
 
     const axisForOrient = (orient) => {
         switch (orient) {
@@ -76,6 +83,11 @@ export default (xScale, yScale) => {
                     }
                 })
                 .on('draw', (d, i, nodes) => {
+                    yAxis.tickFormat(yTickFormat)
+                      .decorate(yDecorate);
+                    if (yTickArgs) {
+                        yAxis.ticks(...yTickArgs);
+                    }
                     select(nodes[i])
                       .select('svg')
                       .call(yAxis.scale(yScale));
@@ -91,6 +103,11 @@ export default (xScale, yScale) => {
                     }
                 })
                 .on('draw', (d, i, nodes) => {
+                    xAxis.tickFormat(xTickFormat)
+                      .decorate(xDecorate);
+                    if (xTickArgs) {
+                        xAxis.ticks(...xTickArgs);
+                    }
                     select(nodes[i])
                       .select('svg')
                       .call(xAxis.scale(xScale));
@@ -109,6 +126,8 @@ export default (xScale, yScale) => {
                       .select('svg')
                       .call(plotArea);
                 });
+
+            decorate(container, data, index);
         });
     };
 
@@ -116,26 +135,45 @@ export default (xScale, yScale) => {
         /range\w*/,   // the scale range is set via the component layout
         /tickFormat/  // use axis.tickFormat instead (only present on linear scales)
     );
-    rebindAll(cartesian, xScale, scaleExclusions, exclude('ticks'), prefix('x'));
-    rebindAll(cartesian, yScale, scaleExclusions, exclude('ticks'), prefix('y'));
+    rebindAll(cartesian, xScale, scaleExclusions, prefix('x'));
+    rebindAll(cartesian, yScale, scaleExclusions, prefix('y'));
 
-    // The scale ticks method is a stateless method that returns (roughly) the number of ticks
-    // requested. This is subtley different from the axis ticks methods that simply stores the given arguments
-    // for invocation of the scale method at some point in the future.
-    // Here we expose the underling scale ticks method in case the user want to generate their own ticks.
-    if (xScale.ticks) {
-        rebindAll(cartesian, xScale, includeMap({'ticks': 'xScaleTicks'}));
-    }
-    if (yScale.ticks) {
-        rebindAll(cartesian, yScale, includeMap({'ticks': 'yScaleTicks'}));
-    }
-
-    const axisExclusions = exclude(
-        'xScale', 'yScale'  // these are set by this components
-    );
-    rebindAll(cartesian, xAxis, axisExclusions, prefix('x'));
-    rebindAll(cartesian, yAxis, axisExclusions, prefix('y'));
-
+    cartesian.xTickFormat = (...args) => {
+        if (!args.length) {
+            return xTickFormat;
+        }
+        xTickFormat = args[0];
+        return cartesian;
+    };
+    cartesian.xTicks = (...args) => {
+        xTickArgs = args;
+        return cartesian;
+    };
+    cartesian.xDecorate = (...args) => {
+        if (!args.length) {
+            return xDecorate;
+        }
+        xDecorate = args[0];
+        return cartesian;
+    };
+    cartesian.yTickFormat = (...args) => {
+        if (!args.length) {
+            return yTickFormat;
+        }
+        yTickFormat = args[0];
+        return cartesian;
+    };
+    cartesian.yTicks = (...args) => {
+        yTickArgs = args;
+        return cartesian;
+    };
+    cartesian.yDecorate = (...args) => {
+        if (!args.length) {
+            return yDecorate;
+        }
+        yDecorate = args[0];
+        return cartesian;
+    };
     cartesian.yOrient = (...args) => {
         if (!args.length) {
             return yOrient;
@@ -143,7 +181,6 @@ export default (xScale, yScale) => {
         const newValue = args[0];
         if (newValue !== yOrient) {
             yAxis = axisForOrient(newValue);
-            rebindAll(cartesian, yAxis, axisExclusions, prefix('y'));
         }
         yOrient = newValue;
         return cartesian;
@@ -155,7 +192,6 @@ export default (xScale, yScale) => {
         const newValue = args[0];
         if (newValue !== xOrient) {
             xAxis = axisForOrient(newValue);
-            rebindAll(cartesian, xAxis, axisExclusions, prefix('x'));
         }
         xOrient = newValue;
         return cartesian;
@@ -186,6 +222,13 @@ export default (xScale, yScale) => {
             return yLabel;
         }
         yLabel = args[0];
+        return cartesian;
+    };
+    cartesian.decorate = (...args) => {
+        if (!args.length) {
+            return decorate;
+        }
+        decorate = args[0];
         return cartesian;
     };
 
