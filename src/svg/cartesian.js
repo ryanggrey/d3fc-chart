@@ -5,9 +5,7 @@ import { axisBottom, axisRight, axisLeft, axisTop } from 'd3fc-axis';
 import { dataJoin } from 'd3fc-data-join';
 import { rebindAll, exclude, prefix, includeMap } from 'd3fc-rebind';
 
-export default (xScale, yScale) => {
-    xScale = xScale || scaleIdentity();
-    yScale = yScale || scaleIdentity();
+export default (xScale = scaleIdentity(), yScale = scaleIdentity()) => {
 
     let yLabel = '';
     let xLabel = '';
@@ -50,7 +48,7 @@ export default (xScale, yScale) => {
                 .attr('style', 'display: flex; height: 100%; width: 100%; flex-direction: column')
                 .attr('auto-resize', '')
                 .html(`<div class='chart-label'
-                            style='height: ${chartLabel ? '2' : '0'}em; line-height: 2em; text-align: center; margin-${yOrient}: 4em'>
+                            style='height: ${chartLabel ? 2 : 0}em; line-height: 2em; text-align: center; margin-${yOrient}: 4em'>
                       </div>
                       <div style='flex: 1; display: flex; flex-direction: ${xOrient === 'bottom' ? 'column' : 'column-reverse'}'>
                           <div style='flex: 1; display: flex; flex-direction: ${yOrient === 'right' ? 'row' : 'row-reverse'}'>
