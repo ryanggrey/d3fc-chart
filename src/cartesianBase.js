@@ -13,8 +13,8 @@ export default (d3fcElementType, plotAreaDrawFunction) =>
 
         let yLabel = functor('');
         let xLabel = functor('');
-        let yOrient = 'right';
-        let xOrient = 'bottom';
+        let yOrient = functor('right');
+        let xOrient = functor('bottom');
         let chartLabel = functor('');
         let plotArea = seriesSvgLine();
         let xTickFormat = null;
@@ -35,11 +35,21 @@ export default (d3fcElementType, plotAreaDrawFunction) =>
                 return axisLeft();
             case 'right':
                 return axisRight();
+            case 'none':
+                return null;
             }
         };
 
-        let xAxis = axisForOrient(xOrient);
-        let yAxis = axisForOrient(yOrient);
+        const marginForOrient = (orient) => {
+            switch (orient) {
+            case 'left':
+                return `margin-left: 4em`;
+            case 'right':
+                return `margin-right: 4em`;
+            default:
+                return '';
+            }
+        };
 
         const containerDataJoin = dataJoin('d3fc-group', 'cartesian-chart');
 
@@ -53,22 +63,34 @@ export default (d3fcElementType, plotAreaDrawFunction) =>
             selection.each((data, index, group) => {
                 const container = containerDataJoin(select(group[index]), [data]);
 
+                const xOrientValue = xOrient(data);
+                const yOrientValue = yOrient(data);
+                const xAxis = axisForOrient(xOrientValue);
+                const yAxis = axisForOrient(yOrientValue);
+
+                const xAxisMarkup = xAxis
+                  ? `<d3fc-svg class='x-axis' style='height: 2em; margin-${yOrientValue}: 4em'></d3fc-svg>
+                    <div class='x-axis-label' style='height: 1em; line-height: 1em; text-align: center; margin-${yOrientValue}: 4em'></div>`
+                  : '';
+                const yAxisMarkup = yAxis
+                  ? `<d3fc-svg class='y-axis' style='width: 3em'></d3fc-svg>
+                    <div style='width: 1em; display: flex; align-items: center; justify-content: center'>
+                        <div class='y-axis-label' style='transform: rotate(-90deg)'></div>
+                    </div>`
+                  : '';
+
                 container.enter()
                     .attr('style', 'display: flex; height: 100%; width: 100%; flex-direction: column')
                     .attr('auto-resize', '')
                     .html(`<div class='chart-label'
-                                style='height: ${chartLabel ? 2 : 0}em; line-height: 2em; text-align: center; margin-${yOrient}: 4em'>
+                                style='height: ${chartLabel ? 2 : 0}em; line-height: 2em; text-align: center; ${marginForOrient(yOrientValue)}'>
                           </div>
-                          <div style='flex: 1; display: flex; flex-direction: ${xOrient === 'bottom' ? 'column' : 'column-reverse'}'>
-                              <div style='flex: 1; display: flex; flex-direction: ${yOrient === 'right' ? 'row' : 'row-reverse'}'>
+                          <div style='flex: 1; display: flex; flex-direction: ${xOrientValue === 'bottom' ? 'column' : 'column-reverse'}'>
+                              <div style='flex: 1; display: flex; flex-direction: ${yOrientValue === 'right' ? 'row' : 'row-reverse'}'>
                                   <${d3fcElementType} class='plot-area' style='flex: 1; overflow: hidden'></${d3fcElementType}>
-                                  <d3fc-svg class='y-axis' style='width: 3em'></d3fc-svg>
-                                  <div style='width: 1em; display: flex; align-items: center; justify-content: center'>
-                                      <div class='y-axis-label' style='transform: rotate(-90deg)'></div>
-                                  </div>
+                                  ${yAxisMarkup}
                               </div>
-                              <d3fc-svg class='x-axis' style='height: 2em; margin-${yOrient}: 4em'></d3fc-svg>
-                              <div class='x-axis-label' style='height: 1em; line-height: 1em; text-align: center; margin-${yOrient}: 4em'></div>
+                              ${xAxisMarkup}
                           </div>`);
 
                 container.select('.y-axis-label')
@@ -82,7 +104,7 @@ export default (d3fcElementType, plotAreaDrawFunction) =>
 
                 container.select('.y-axis')
                     .on('measure', (d, i, nodes) => {
-                        if (yOrient === 'left') {
+                        if (yOrientValue === 'left') {
                             const { width, height } = event.detail;
                             select(nodes[i])
                               .select('svg')
@@ -102,7 +124,7 @@ export default (d3fcElementType, plotAreaDrawFunction) =>
 
                 container.select('.x-axis')
                     .on('measure', (d, i, nodes) => {
-                        if (xOrient === 'top') {
+                        if (xOrientValue === 'top') {
                             const { width, height } = event.detail;
                             select(nodes[i])
                               .select('svg')
@@ -185,22 +207,14 @@ export default (d3fcElementType, plotAreaDrawFunction) =>
             if (!args.length) {
                 return yOrient;
             }
-            const newValue = args[0];
-            if (newValue !== yOrient) {
-                yAxis = axisForOrient(newValue);
-            }
-            yOrient = newValue;
+            yOrient = functor(args[0]);
             return cartesian;
         };
         cartesian.xOrient = (...args) => {
             if (!args.length) {
                 return xOrient;
             }
-            const newValue = args[0];
-            if (newValue !== xOrient) {
-                xAxis = axisForOrient(newValue);
-            }
-            xOrient = newValue;
+            xOrient = functor(args[0]);
             return cartesian;
         };
         cartesian.chartLabel = (...args) => {
